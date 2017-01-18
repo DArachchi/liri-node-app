@@ -50,21 +50,9 @@ function findMovie() {
 
 	request(queryUrl, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
-			console.log("Title: " + JSON.parse(body).Title);
-			console.log("Release year: " + JSON.parse(body).Year);
-			console.log("IMDB Rating: " + JSON.parse(body).imdbRating);
-			console.log("Country of Production: " + JSON.parse(body).Country);
-			console.log("Language: " + JSON.parse(body).Language);
-			console.log("Plot: " + JSON.parse(body).Plot);
-			console.log("Actors: " + JSON.parse(body).Actors);
-			console.log("Rotten Tomatoes Rating: " + JSON.parse(body).tomatoRating);
-			console.log("Rotten Tomatoes URL: " + JSON.parse(body).tomatoURL);
+			output = "Title: " + JSON.parse(body).Title + "\r\nRelease year: " + JSON.parse(body).Year + "\r\nIMDB Rating: " + JSON.parse(body).imdbRating + "\r\nCountry of Production: " + JSON.parse(body).Country + "\r\nLanguage: " + JSON.parse(body).Language + "\r\nPlot: " + JSON.parse(body).Plot + "\r\nActors: " + JSON.parse(body).Actors + "\r\nRotten Tomatoes Rating: " + JSON.parse(body).tomatoRating + "\r\nRotten Tomatoes URL: " + JSON.parse(body).tomatoURL;
 
-			fs.appendFile("log.txt", "Title: " + JSON.parse(body).Title + " Release year: " + JSON.parse(body).Year + " IMDB Rating: " + JSON.parse(body).imdbRating + " Country of Production: " + JSON.parse(body).Country + " Language: " + JSON.parse(body).Language + " Plot: " + JSON.parse(body).Plot + " Actors: " + JSON.parse(body).Actors + " Rotten Tomatoes Rating: " + JSON.parse(body).tomatoRating + " Rotten Tomatoes URL: " + JSON.parse(body).tomatoURL + ",", function(err) {
-				if(err) {
-					console.log(err);
-				}
-			})
+			outputData();
 		}
 	})
 }
@@ -84,16 +72,9 @@ function findSong() {
 			return;
 		}
 		var requestedTrack = data.tracks.items[resultNumber];
-		console.log("Artist Name: " + requestedTrack.artists[0].name);
-		console.log("Song Name: " + requestedTrack.name)
-		console.log("Spotify Preview Link: " + requestedTrack.preview_url)
-		console.log("Album Name: " + requestedTrack.album.name)
+		output = "Artist Name: " + requestedTrack.artists[0].name + "\r\nSong Name: " + requestedTrack.name + "\r\nSpotify Preview Link: " + requestedTrack.preview_url + "\r\nAlbum Name: " + requestedTrack.album.name + ",";
 
-		fs.appendFile("log.txt", "Artist Name: " + requestedTrack.artists[0].name + " Song Name: " + requestedTrack.name + " Spotify Preview Link: " + requestedTrack.preview_url + " Album Name: " + requestedTrack.album.name + ",", function(err) {
-			if(err) {
-				console.log(err);
-			}
-		})
+		outputData();
 
 	});
 }
@@ -110,19 +91,26 @@ function findTweets() {
 		if (error) {
 			console.log(error);
 		} else {
+			output = "";
 			for (var i=0; i<20; i++) {
 				if (tweets[i]) {
-					var currentTweetData = tweets[i].created_at + " " + tweets[i].text;
-					console.log(currentTweetData);
-					fs.appendFile("log.txt", currentTweetData + ",", function(err) {
-						if(err) {
-							console.log(err);
-						}
-					})
+					var currentTweetData = tweets[i].created_at + " " + tweets[i].text + "\r\n";
+					output = output + currentTweetData;
 				}
 			}
+			outputData();
 		}
 	});
+}
+
+function outputData() {
+	console.log(output);
+
+	fs.appendFile("log.txt", output + ",\r\n", function(err) {
+		if(err) {
+			console.log(err);
+		}
+	})
 }
 
 console.log("******************************");
