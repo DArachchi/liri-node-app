@@ -1,11 +1,13 @@
 
 var fs = require("fs");
+var keys = require("./keys.js");
 var request = require("request");
 var spotify = require("spotify");
 var twitter = require("twitter");
 
 var command = process.argv[2];
 var argument = process.argv[3];
+var output;
 
 function checkCommand() {
 	if (command === "do-what-it-says") {
@@ -57,6 +59,12 @@ function findMovie() {
 			console.log("Actors: " + JSON.parse(body).Actors);
 			console.log("Rotten Tomatoes Rating: " + JSON.parse(body).tomatoRating);
 			console.log("Rotten Tomatoes URL: " + JSON.parse(body).tomatoURL);
+
+			fs.appendFile("log.txt", "Title: " + JSON.parse(body).Title + " Release year: " + JSON.parse(body).Year + " IMDB Rating: " + JSON.parse(body).imdbRating + " Country of Production: " + JSON.parse(body).Country + " Language: " + JSON.parse(body).Language + " Plot: " + JSON.parse(body).Plot + " Actors: " + JSON.parse(body).Actors + " Rotten Tomatoes Rating: " + JSON.parse(body).tomatoRating + " Rotten Tomatoes URL: " + JSON.parse(body).tomatoURL + ",", function(err) {
+				if(err) {
+					console.log(err);
+				}
+			})
 		}
 	})
 }
@@ -81,11 +89,40 @@ function findSong() {
 		console.log("Spotify Preview Link: " + requestedTrack.preview_url)
 		console.log("Album Name: " + requestedTrack.album.name)
 
+		fs.appendFile("log.txt", "Artist Name: " + requestedTrack.artists[0].name + " Song Name: " + requestedTrack.name + " Spotify Preview Link: " + requestedTrack.preview_url + " Album Name: " + requestedTrack.album.name + ",", function(err) {
+			if(err) {
+				console.log(err);
+			}
+		})
+
 	});
 }
 
 function findTweets() {
-
+	var client = new twitter ({
+		consumer_key: keys.twitterKeys.consumer_key,
+		consumer_secret: keys.twitterKeys.consumer_secret,
+		access_token_key: keys.twitterKeys.access_token_key,
+		access_token_secret: keys.twitterKeys.access_token_secret
+	})
+	var params = {screen_name: "bhavyabhalla"};
+	client.get('statuses/user_timeline', params, function(error, tweets, response) {
+		if (error) {
+			console.log(error);
+		} else {
+			for (var i=0; i<20; i++) {
+				if (tweets[i]) {
+					var currentTweetData = tweets[i].created_at + " " + tweets[i].text;
+					console.log(currentTweetData);
+					fs.appendFile("log.txt", currentTweetData + ",", function(err) {
+						if(err) {
+							console.log(err);
+						}
+					})
+				}
+			}
+		}
+	});
 }
 
 console.log("******************************");
