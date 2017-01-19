@@ -86,7 +86,7 @@ function findTweets() {
 		access_token_key: keys.twitterKeys.access_token_key,
 		access_token_secret: keys.twitterKeys.access_token_secret
 	})
-	var params = {screen_name: "bhavyabhalla"};
+	var params = {screen_name: "LewisHamilton"};
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
 		if (error) {
 			console.log(error);
